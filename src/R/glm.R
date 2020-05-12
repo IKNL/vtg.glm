@@ -43,6 +43,7 @@ dglm <- function(client, formula, family = gaussian, tol = 1e-08, maxit = 25) {
         Ds <- lapply(results, as.data.frame)
         master <- master_deviance(nodes = results, master = master)
         if (master$converged) {
+            vtg::log$debug("Converged.")
             break
         }
     }

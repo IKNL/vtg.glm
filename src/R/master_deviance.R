@@ -28,7 +28,6 @@ master_deviance <- function(..., nodes = NULL, master) {
         vtg::log$debug("Model hasn't converged. Max iteration not reached.")
         master$converged = convergence
         master$iter = master$iter+1
-
         #saveRDS(master,file = paste0("master.Rds"))
         return(master)
     } else {

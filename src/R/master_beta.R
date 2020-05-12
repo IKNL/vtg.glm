@@ -1,6 +1,7 @@
 master_beta <- function(..., nodes = NULL, master = NULL) {
     #receive as many object as many are the nodes involved in the analysis (...)
     #the function update the betas
+    vtg::log$debug("Starting master Beta.")
     formula <- master$formula
     family <- master$family
     if (is.character(family))
@@ -16,7 +17,8 @@ master_beta <- function(..., nodes = NULL, master = NULL) {
     } else {
         g <- nodes
     }
-    allwt <- Reduce(`+`, lapply(1:length(g), function(j) g[[j]]$wt2)) #total sum o fweights
+    vtg::log$debug("Merging node calculation to update new Betas.")
+    allwt <- Reduce(`+`, lapply(1:length(g), function(j) g[[j]]$wt2)) #total sum of weights
     wtdmu <- Reduce(`+`, lapply(1:length(g), function(j) g[[j]]$wt1/allwt)) #global weighted mu
     a <- Reduce(`+`, lapply(1:length(g), function(j) g[[j]]$v1)) #sum up components of the matrix to be inverted calculated in each node
     b <- Reduce(`+`, lapply(1:length(g), function(j) g[[j]]$v2)) #sum up components of the matrix to be inverted calculated in each node
@@ -36,7 +38,7 @@ master_beta <- function(..., nodes = NULL, master = NULL) {
         disp <- phi / (nobs - nvars)
         est.disp <- T
     }
-
+    vtg::log$debug("Updating the Betas.")
     fb <- solve(a, b, tol = 2 * .Machine$double.eps) #calculate the new betas
     se <- sqrt(diag(solve(a) * disp)) #calculate the Standard error of coefficients
 

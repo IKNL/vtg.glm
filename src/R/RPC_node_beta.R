@@ -23,13 +23,14 @@ RPC_node_beta <- function(Data, weights = NULL, master = NULL) {
     nvars <- ncol(X)   # needed by the initialize expression below
 
     if (master$iter==1) {
+        vtg::log$debug("First iteration. Initializing variables.")
         etastart = NULL
         eval(family$initialize) # initializes n and fitted values mustart
         eta = family$linkfun(mustart) # we then initialize eta with this
     } else {
         eta = (X %*% master$coef[,ncol(master$coef)]) + offset #update eta
     }
-
+    vtg::log$debug("Calculating the Betas.")
     mu <-  family$linkinv(eta)
     varg <- family$variance(mu)
     gprime <- family$mu.eta(eta)
