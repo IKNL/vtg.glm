@@ -1,4 +1,4 @@
-RPC_node_deviance <- function(Data, weights = NULL, master) {
+RPC_node_deviance <- function(Data,dstar=NULL, weights = NULL, master) {
     vtg::log$debug("Starting node deviance.")
     #the function update the betas
     formula <- master$formula
@@ -7,13 +7,27 @@ RPC_node_deviance <- function(Data, weights = NULL, master) {
     y <- eval(formula[[2]], envir = Data) #extract y variable names
     X <- model.matrix(formula,data = Data) #extract X variables
     offset=model.offset(model.frame(formula, data = Data)) #extract the offset
-    if (is.character(family))
+    #functions of the family required (gaussian, poisson, logistic,...)
+    if(family=='rs.poi'){
+      if(is.null(dstar)){
+        "expected count required for relative survival"
+        break
+      }
+      family <- poisson()
+      family$family <- "rs.poi"
+      family$link <- "glm relative survival model with Poisson error"
+      family$linkfun <- function(mu) log(mu - dstar)
+      family$linkinv <- function(eta) dstar + exp(eta)
+      dstar=eval(as.name(dstar),Data)
+    }else{
+      if (is.character(family)) 
         family <- get(family, mode = "function", envir = parent.frame())
-    if (is.function(family))
+      if (is.function(family)) 
         family <- family()
-    if (is.null(family$family)) {
+      if (is.null(family$family)) {
         print(family)
         stop("'family' not recognized")
+      }
     }
     if (is.null(weights)) weights <- rep.int(1, nrow(X))
     if (is.null(offset)) offset <- rep.int(0, nrow(X))
@@ -21,9 +35,13 @@ RPC_node_deviance <- function(Data, weights = NULL, master) {
     if (master$iter == 1) { #only for first iteration
         vtg::log$debug("First iteration. Initializing variables.")
         etastart = NULL
-        nobs = nrow(X)    # needed by the initialize expression below
-        nvars = ncol(X)   # needed by the initialize expression below
-        eval(family$initialize) # initializes n and fitted values mustart
+        if(family$family=="rs.poi"){
+          mustart= pmax(y,dstar) + 0.1
+        }else{
+          nobs = nrow(X)    # needed by the initialize expression below
+          nvars = ncol(X)   # needed by the initialize expression below
+          eval(family$initialize) # initializes n and fitted values mustart
+        } # initializes n and fitted values mustart
         eta = family$linkfun(mustart) + offset # we then initialize eta
         mu_old = family$linkinv(eta)
         dev_old = 0

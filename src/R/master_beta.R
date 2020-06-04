@@ -4,13 +4,21 @@ master_beta <- function(..., nodes = NULL, master = NULL) {
     vtg::log$debug("Starting master Beta.")
     formula <- master$formula
     family <- master$family
-    if (is.character(family))
+    if(family=='rs.poi'){
+      family <- poisson()
+      family$family <- "rs.poi"
+      family$link <- "glm relative survival model with Poisson error"
+      family$linkfun <- function(mu) log(mu - dstar)
+      family$linkinv <- function(eta) dstar + exp(eta)
+    }else{
+      if (is.character(family)) 
         family <- get(family, mode = "function", envir = parent.frame())
-    if (is.function(family))
+      if (is.function(family)) 
         family <- family()
-    if (is.null(family$family)) {
+      if (is.null(family$family)) {
         print(family)
         stop("'family' not recognized")
+      }
     }
     if (is.null(nodes)) {
         g <- list(...)  #place the dots into a list
@@ -31,8 +39,8 @@ master_beta <- function(..., nodes = NULL, master = NULL) {
     } else {
         beta <- master$coef
     }
-    if (family$family %in% c("poisson", "binomial")) {
-        disp <- 1
+    if(family$family %in% c('poisson','binomial','rs.poi')){
+      disp <- 1
         est.disp <- FALSE
     } else {
         disp <- phi / (nobs - nvars)

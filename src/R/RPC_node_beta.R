@@ -1,4 +1,4 @@
-RPC_node_beta <- function(Data, weights = NULL, master = NULL) {
+RPC_node_beta <- function(Data, dstar=NULL,weights = NULL, master = NULL) {
     #if(is.null(user)){ print("Please specify the user number (1,2,3,....)"); break}
     vtg::log$debug("Starting the node beta.")
     formula <- master$formula
@@ -7,13 +7,26 @@ RPC_node_beta <- function(Data, weights = NULL, master = NULL) {
     X <- model.matrix(formula, data = Data) #create a model matrix
     offset <- model.offset(model.frame(formula, data = Data)) #extract the offset from formula (if exists)
     #functions of the family required (gaussian, poisson, logistic,...)
-    if (is.character(family))
+    if(family=='rs.poi'){
+      if(is.null(dstar)){
+        "expected count required for relative survival"
+        break
+      }
+      family <- poisson()
+      family$family <- "rs.poi"
+      family$link <- "glm relative survival model with Poisson error"
+      family$linkfun <- function(mu) log(mu - dstar)
+      family$linkinv <- function(eta) dstar + exp(eta)
+      dstar=eval(as.name(dstar),Data)
+    }else{
+      if (is.character(family)) 
         family <- get(family, mode = "function", envir = parent.frame())
-    if (is.function(family))
+      if (is.function(family)) 
         family <- family()
-    if (is.null(family$family)) {
+      if (is.null(family$family)) {
         print(family)
         stop("'family' not recognized")
+      }
     }
 
     if (is.null(weights)) weights <- rep.int(1, nrow(X))
@@ -25,7 +38,11 @@ RPC_node_beta <- function(Data, weights = NULL, master = NULL) {
     if (master$iter==1) {
         vtg::log$debug("First iteration. Initializing variables.")
         etastart = NULL
-        eval(family$initialize) # initializes n and fitted values mustart
+        if(family$family=="rs.poi"){
+          mustart= pmax(y,dstar) + 0.1
+        }else{
+          eval(family$initialize)
+        } # initializes n and fitted values mustart
         eta = family$linkfun(mustart) # we then initialize eta with this
     } else {
         eta = (X %*% master$coef[,ncol(master$coef)]) + offset #update eta
