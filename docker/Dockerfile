@@ -5,11 +5,11 @@ FROM custom-r-base
 
 # This is a placeholder that should be overloaded by invoking
 # docker build with '--build-arg PKG_NAME=...'
-ARG PKG_NAME='algorithm'
+ARG PKG_NAME='vtg.glm'
 
-LABEL maintainer="Main Tainer <user@example.com>"
+LABEL maintainer="Frank Martin <f.martin@iknl.nl>"
 
-# Install federated chisq package
+# Install federated glm package
 COPY src /usr/local/R/${PKG_NAME}/
 WORKDIR /usr/local/R/${PKG_NAME}
 RUN Rscript -e 'library(devtools)' -e 'install_deps(".")'

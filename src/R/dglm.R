@@ -1,8 +1,3 @@
-# master_init=function(formula,family=gaussian,tol= 1e-08,maxit=25) {
-#     saveRDS(list(formula=formula,family=family,iter=1,tol= tol,maxit=maxit),"master.Rds")
-# }
-
-
 #' Run the distributed GLM algorithm.
 #'
 #' Params:
@@ -25,23 +20,38 @@ dglm <- function(client, formula, family = gaussian, tol = 1e-08, maxit = 25) {
 
     vtg::log$debug("Initialising.")
 
-    master <- list(formula = formula, family = family, iter = 1, tol = tol,
-                   maxit = maxit)
+
+    # Run in a MASTER container
+    if (client$use.master.container) {
+        vtg::log$debug(glue::glue("Running `dglm` in master container using image '{image.name}'"))
+        result <- client$call("dglm", formula, family, tol, maxit)
+        return(result)
+    }
 
     # results <- client$call("node_beta", master=master)
     # print(results)
+    master <- list(formula = formula, family = family, iter = 1, tol = tol,
+                   maxit = maxit)
+
 
     repeat{
-        # print(master$iter)
-        vtg::log$info(glue::glue("I am on iteration {master$iter}."))
+
+        vtg::log$info(glue::glue("--> I am on iteration {master$iter}."))
         results <- client$call("node_beta", master = master)
         # print(length(results))
-        vtg::log$debug(glue::glue("length of results = {length(results)}"))
+
+        vtg::log$debug(glue::glue("--> length of results = {length(results)}"))
         Ds <- lapply(results, as.data.frame)
-        master <- master_beta(master= master, nodes = results)
+
+        vtg::log$debug("Master beta")
+        master <- vtg.glm::master_beta(master= master, nodes = results)
+
+        vtg::log$debug(glue::glue("--> length of results = {length(results)}"))
         results <- client$call("node_deviance", master = master)
         Ds <- lapply(results, as.data.frame)
-        master <- master_deviance(nodes = results, master = master)
+
+        vtg::log$debug("Master deviance")
+        master <- vtg.glm::master_deviance(nodes = results, master = master)
         if (master$converged) {
             vtg::log$debug("Converged.")
             break

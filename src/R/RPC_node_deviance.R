@@ -11,7 +11,7 @@ RPC_node_deviance <- function(Data,dstar=NULL, weights = NULL, master) {
     if(family=='rs.poi'){
       if(is.null(dstar)){
         "expected count required for relative survival"
-        break
+        return()
       }
       family <- poisson()
       family$family <- "rs.poi"
@@ -20,9 +20,9 @@ RPC_node_deviance <- function(Data,dstar=NULL, weights = NULL, master) {
       family$linkinv <- function(eta) dstar + exp(eta)
       dstar=eval(as.name(dstar),Data)
     }else{
-      if (is.character(family)) 
+      if (is.character(family))
         family <- get(family, mode = "function", envir = parent.frame())
-      if (is.function(family)) 
+      if (is.function(family))
         family <- family()
       if (is.null(family$family)) {
         print(family)

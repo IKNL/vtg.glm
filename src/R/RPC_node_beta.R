@@ -1,6 +1,8 @@
 RPC_node_beta <- function(Data, dstar=NULL,weights = NULL, master = NULL) {
+
     #if(is.null(user)){ print("Please specify the user number (1,2,3,....)"); break}
     vtg::log$debug("Starting the node beta.")
+    vtg::log$debug(Data)
     formula <- master$formula
     family <- master$family
     y <- eval(formula[[2]], envir = Data) #extract y and X varibales name from formula
@@ -10,7 +12,7 @@ RPC_node_beta <- function(Data, dstar=NULL,weights = NULL, master = NULL) {
     if(family=='rs.poi'){
       if(is.null(dstar)){
         "expected count required for relative survival"
-        break
+        return()
       }
       family <- poisson()
       family$family <- "rs.poi"
@@ -19,9 +21,9 @@ RPC_node_beta <- function(Data, dstar=NULL,weights = NULL, master = NULL) {
       family$linkinv <- function(eta) dstar + exp(eta)
       dstar=eval(as.name(dstar),Data)
     }else{
-      if (is.character(family)) 
+      if (is.character(family))
         family <- get(family, mode = "function", envir = parent.frame())
-      if (is.function(family)) 
+      if (is.function(family))
         family <- family()
       if (is.null(family$family)) {
         print(family)
