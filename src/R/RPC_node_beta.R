@@ -1,8 +1,9 @@
 RPC_node_beta <- function(Data, dstar=NULL,weights = NULL, master = NULL) {
+    Data=Format_Data(Data,master)
+
 
     #if(is.null(user)){ print("Please specify the user number (1,2,3,....)"); break}
     vtg::log$debug("Starting the node beta.")
-    vtg::log$debug(Data)
     formula <- master$formula
     family <- master$family
     y <- eval(formula[[2]], envir = Data) #extract y and X varibales name from formula

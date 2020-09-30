@@ -1,5 +1,7 @@
 RPC_node_deviance <- function(Data,dstar=NULL, weights = NULL, master) {
     vtg::log$debug("Starting node deviance.")
+    Data=Format_Data(Data,master)
+
     #the function update the betas
     formula <- master$formula
     family <- master$family

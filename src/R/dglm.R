@@ -3,11 +3,12 @@
 #' Params:
 #'    client: ptmclient::Client instance.
 #'    formula: dependant_variable ~ explanatory_variable(i) + ...
+#'    types: types of the columns that are used in the formula
 #'    family: to this up it uses the Gaussian as this is the default value
 #'    tol: tolerance level
 #'    maxit: maximum number of iterations the function is allowed to cycle up to
 #'
-dglm <- function(client, formula, family = gaussian, tol = 1e-08, maxit = 25) {
+dglm <- function(client, formula, types=NULL, family = gaussian, tol = 1e-08, maxit = 25) {
 
     USE_VERBOSE_OUTPUT <- getOption('vtg.verbose_output', T)
     lgr::threshold("debug")
@@ -29,8 +30,8 @@ dglm <- function(client, formula, family = gaussian, tol = 1e-08, maxit = 25) {
     }
 
     # results <- client$call("node_beta", master=master)
-    # print(results)
-    master <- list(formula = formula, family = family, iter = 1, tol = tol,
+    # print(results)\
+    master <- list(formula = formula, types=types, family = family, iter = 1, tol = tol,
                    maxit = maxit)
 
 
