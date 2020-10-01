@@ -1,18 +1,19 @@
-RPC_node_beta <- function(Data, dstar=NULL,weights = NULL, master = NULL) {
-    Data=Format_Data(Data,master)
-
-
-    #if(is.null(user)){ print("Please specify the user number (1,2,3,....)"); break}
+RPC_node_beta <- function(Data,weights = NULL, master = NULL) {
     vtg::log$debug("Starting the node beta.")
+    if(!is.null(master$types)){
+      Data=Format_Data(Data,master)
+    }
+    #if(is.null(user)){ print("Please specify the user number (1,2,3,....)"); break}
     formula <- master$formula
     family <- master$family
+    dstar <- master$dstar
     y <- eval(formula[[2]], envir = Data) #extract y and X varibales name from formula
     X <- model.matrix(formula, data = Data) #create a model matrix
     offset <- model.offset(model.frame(formula, data = Data)) #extract the offset from formula (if exists)
     #functions of the family required (gaussian, poisson, logistic,...)
     if(family=='rs.poi'){
       if(is.null(dstar)){
-        "expected count required for relative survival"
+        vtg::log$debug("expected count required for relative survival")
         return()
       }
       family <- poisson()

@@ -1,10 +1,13 @@
-RPC_node_deviance <- function(Data,dstar=NULL, weights = NULL, master) {
+RPC_node_deviance <- function(Data, weights = NULL, master) {
     vtg::log$debug("Starting node deviance.")
-    Data=Format_Data(Data,master)
+    if(!is.null(master$types)){
+        Data=Format_Data(Data,master)
+    }
 
     #the function update the betas
     formula <- master$formula
     family <- master$family
+    dstar <- master$dstar
     #the function calculate the residual deviance with updated betas for the single node
     y <- eval(formula[[2]], envir = Data) #extract y variable names
     X <- model.matrix(formula,data = Data) #extract X variables

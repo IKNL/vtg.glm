@@ -8,7 +8,7 @@
 #'    tol: tolerance level
 #'    maxit: maximum number of iterations the function is allowed to cycle up to
 #'
-dglm <- function(client, formula, types=NULL, family = gaussian, tol = 1e-08, maxit = 25) {
+dglm <- function(client, formula, dstar=NULL, types=NULL, family = gaussian, tol = 1e-08, maxit = 25) {
 
     USE_VERBOSE_OUTPUT <- getOption('vtg.verbose_output', T)
     lgr::threshold("debug")
@@ -31,7 +31,7 @@ dglm <- function(client, formula, types=NULL, family = gaussian, tol = 1e-08, ma
 
     # results <- client$call("node_beta", master=master)
     # print(results)\
-    master <- list(formula = formula, types=types, family = family, iter = 1, tol = tol,
+    master <- list(formula = formula, types=types,dstar=dstar, family = family, iter = 1, tol = tol,
                    maxit = maxit)
 
 
