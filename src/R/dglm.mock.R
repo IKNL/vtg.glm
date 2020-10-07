@@ -1,13 +1,13 @@
 dglm.mock <- function(formula = num_awards ~ prog + math, types=NULL, dstar=NULL, family="poisson",tol= 1e-08,maxit=25) {
 
     datasets <- list(
-        read.csv("C:/Users/mce1908.52713/Desktop/Eurocare/Data_NL/NL.csv"),
-        read.csv("C:/Users/mce1908.52713/Desktop/Eurocare/Data_NL/IT.csv"),
-        read.csv("C:/Users/mce1908.52713/Desktop/Eurocare/Data_NL/EU.csv")
+        read.csv("./src/data/NL.csv"),
+        read.csv("./src/data/IT.csv"),
+        read.csv("./src/data/EU.csv")
     )
 
     client <- vtg::MockClient$new(datasets, "vtg.glm")
-    results <- vtg.glm::dglm(client, formula, family, tol)
+    results <- vtg.glm::dglm(client, formula=formula, family=family, types=types, tol=tol, dstar=dstar)
 }
 types=list(sex=list(type='factor',levels=1:2),
            site2=list(type='factor',levels=1:17),

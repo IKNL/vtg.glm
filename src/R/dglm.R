@@ -19,19 +19,20 @@ dglm <- function(client, formula, dstar=NULL, types=NULL, family = gaussian, tol
         task.name <- "GLM"
     )
 
-    vtg::log$debug("Initialising.")
+    vtg::log$debug("Initializing..")
 
 
     # Run in a MASTER container
     if (client$use.master.container) {
-        vtg::log$debug(glue::glue("Running `dglm` in master container using image '{image.name}'"))
-        result <- client$call("dglm", formula, family, tol, maxit)
+        vtg::log$debug(glue::glue("Running `dglm` in master container using image '{image.name}'.."))
+        # result <- vtg.glm::dglm(client, formula=formula, dstar=dstar, types=types, family=family, tol=tol, maxit=maxit)
+        result <- client$call("dglm", formula=formula, dstar=dstar, types=types, family=family, tol=tol, maxit=maxit)
         return(result)
     }
 
     # results <- client$call("node_beta", master=master)
     # print(results)\
-    master <- list(formula = formula, types=types,dstar=dstar, family = family, iter = 1, tol = tol,
+    master <- list(formula = formula, types=types, dstar=dstar, family = family, iter = 1, tol = tol,
                    maxit = maxit)
 
 
