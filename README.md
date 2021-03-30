@@ -42,3 +42,7 @@ client$setCollaborationId(1)
 # vtg.dglm contains the function `dglm`.
 model <- vtg.glm::dglm(client, formula = num_awards ~ prog + math, family="poisson",tol= 1e-08,maxit=25)
 ```
+
+##Notes
+1. Added as.GLM.R to convert the result to a glm/lm object 
+  * Simply wrap the object with the as.GLM -> as.GLM(object) where 'object' is the final output (the trained model)
