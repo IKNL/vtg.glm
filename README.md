@@ -1,5 +1,5 @@
 
-# Depreciated 
+# Deprecated 
 > 
 > :warning: **This project has been moved to: https://github.com/IKNL/vantage6-algorithms ** :warning:
 > 
