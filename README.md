@@ -1,3 +1,11 @@
+
+# Depreciated 
+
+>[!WARNING]
+> This project has been moved to: https://github.com/IKNL/vantage6-algorithms
+
+-------------------------------------------------------------------------
+
 # vtg.dglm
 Implementation of the federated Generalized Linear Model for the [vantage6](https://github.com/IKNL/VANTAGE6) federated infrastructure.
 
