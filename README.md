@@ -1,9 +1,8 @@
 
 # Depreciated 
-
->[!WARNING]
-> This project has been moved to: https://github.com/IKNL/vantage6-algorithms
-
+> 
+> :warning: **This project has been moved to: https://github.com/IKNL/vantage6-algorithms ** :warning:
+> 
 -------------------------------------------------------------------------
 
 # vtg.dglm
